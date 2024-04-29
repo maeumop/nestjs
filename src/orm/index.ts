@@ -1,8 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ToDoList } from './entity/todo';
-import { User } from './entity/user';
+import { ToDoListEntity } from './entity/todo.entity';
+import { UserEntity } from './entity/user.entity';
 
 @Module({})
 export class TypeormModule {
@@ -10,12 +10,12 @@ export class TypeormModule {
     const typeormModule: DynamicModule = TypeOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
-        host: config.get('HOST'),
-        port: config.get('PORT'),
-        username: config.get('USERNAME'),
-        password: config.get('PASSWORD'),
-        database: config.get('DATABASE'),
-        entities: [ToDoList, User],
+        host: config.get<string>('HOST'),
+        port: config.get<number>('PORT'),
+        username: config.get<string>('USERNAME'),
+        password: config.get<string>('PASSWORD'),
+        database: config.get<string>('DATABASE'),
+        entities: [ToDoListEntity, UserEntity],
         synchronize: true,
       }),
       inject: [ConfigService],

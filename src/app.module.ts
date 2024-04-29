@@ -1,19 +1,33 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ToDoListEntity } from './orm/entity/todo.entity';
+import { UserEntity } from './orm/entity/user.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeormModule } from './orm';
 import { UserModule } from './user/user.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+
+const config = new ConfigService();
 
 @Module({
-  imports: [TypeormModule.forRoot(), UserModule],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ClassSerializerInterceptor,
-    },
+  imports: [
+    ConfigModule.forRoot({
+      cache: true,
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: config.get('HOST'),
+      port: config.get('PORT'),
+      username: config.get('USERNAME'),
+      password: config.get('PASSWORD'),
+      database: config.get('DATABASE'),
+      entities: [ToDoListEntity, UserEntity],
+      synchronize: true,
+    }),
+    UserModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

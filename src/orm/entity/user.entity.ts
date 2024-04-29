@@ -18,7 +18,7 @@ class Sha512 implements ValueTransformer {
 }
 
 @Entity()
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   userUid: string = uuidv4();
 
